@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Devis Instantané - HB Plomberie</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #28a745;
+        }
+        
+        .devis-form-section {
+            padding: 80px 0;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+        
+        .devis-form {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-step {
+            display: none;
+        }
+        
+        .form-step.active {
+            display: block;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+        
+        .step {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 15px;
+            position: relative;
+            color: #6c757d;
+            font-weight: bold;
+        }
+        
+        .step.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .step.completed {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .step:not(:last-child):after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background-color: #e9ecef;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .service-option {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .service-option:hover {
+            border-color: var(--primary-color);
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+        
+        .service-option.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(0, 123, 255, 0.1);
+        }
+        
+        .urgency-level {
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .urgency-level.normal {
+            background-color: #e9ecef;
+        }
+        
+        .urgency-level.medium {
+            background-color: #ffd700;
+        }
+        
+        .urgency-level.high {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .estimated-price {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            font-weight: bold;
+            margin: 20px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <img src="logo1.png" alt="HB Plomberie Logo" height="40">
+            </a>
+            <a href="index.html" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-left me-2"></i>
+                Retour au site
+            </a>
+        </div>
+    </nav>
+
+    <section class="devis-form-section">
+        <div class="container">
+            <div class="devis-form">
+                <h1 class="text-center mb-4">Devis Gratuit Instantané</h1>
+                <div class="step-indicator">
+                    <div class="step active">1</div>
+                    <div class="step">2</div>
+                    <div class="step">3</div>
+                    <div class="step">4</div>
+                </div>
+
+                <form id="devisForm">
+                    <!-- Étape 1: Identification du problème -->
+                    <div class="form-step active" id="step1">
+                        <h3 class="mb-4">Quel est votre problème ?</h3>
+                        <div class="service-options">
+                            <div class="service-option" data-service="plomberie">
+                                <h4><i class="fas fa-faucet me-2"></i>Problème de plomberie</h4>
+                                <p class="text-muted mb-0">Fuite, installation, débouchage...</p>
+                            </div>
+                            <div class="service-option" data-service="chauffage">
+                                <h4><i class="fas fa-temperature-high me-2"></i>Problème de chauffage</h4>
+                                <p class="text-muted mb-0">Panne, installation, entretien...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Étape 2: Niveau d'urgence -->
+                    <div class="form-step" id="step2">
+                        <h3 class="mb-4">Quel est le niveau d'urgence ?</h3>
+                        <div class="urgency-options">
+                            <div class="urgency-level normal" data-urgency="normal">
+                                <i class="fas fa-clock fa-2x mb-3"></i>
+                                <h5>Standard</h5>
+                                <p class="mb-0">Intervention sous 48h</p>
+                            </div>
+                            <div class="urgency-level medium" data-urgency="medium">
+                                <i class="fas fa-bolt fa-2x mb-3"></i>
+                                <h5>Rapide</h5>
+                                <p class="mb-0">Intervention sous 24h</p>
+                            </div>
+                            <div class="urgency-level high" data-urgency="high">
+                                <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+                                <h5>Urgent</h5>
+                                <p class="mb-0">Intervention immédiate</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Étape 3: Détails -->
+                    <div class="form-step" id="step3">
+                        <h3 class="mb-4">Détails de l'intervention</h3>
+                        <div id="plomberie-details" style="display: none;">
+                            <div class="form-group mb-4">
+                                <label class="form-label">Type d'intervention</label>
+                                <select class="form-select" name="plomberie-type">
+                                    <optgroup label="Problèmes courants">
+                                        <option value="fuite">Fuite d'eau</option>
+                                        <option value="evacuation">Problème d'évacuation</option>
+                                        <option value="pression">Problème de pression</option>
+                                    </optgroup>
+                                    <optgroup label="Installation/Remplacement">
+                                        <option value="robinet">Robinetterie</option>
+                                        <option value="sanitaire">Sanitaires</option>
+                                        <option value="cumulus">Chauffe-eau</option>
+                                    </optgroup>
+                                    <optgroup label="Entretien">
+                                        <option value="debouchage">Débouchage</option>
+                                        <option value="detartrage">Détartrage</option>
+                                        <option value="inspection">Inspection caméra</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="chauffage-details" style="display: none;">
+                            <div class="form-group mb-4">
+                                <label class="form-label">Type d'intervention</label>
+                                <select class="form-select" name="chauffage-type">
+                                    <optgroup label="Problèmes courants">
+                                        <option value="panne">Panne de chauffage</option>
+                                        <option value="fuite-chauffage">Fuite sur radiateur</option>
+                                        <option value="regulation">Problème de régulation</option>
+                                    </optgroup>
+                                    <optgroup label="Installation/Remplacement">
+                                        <option value="chaudiere">Chaudière</option>
+                                        <option value="pac">Pompe à chaleur</option>
+                                        <option value="radiateur">Radiateur</option>
+                                    </optgroup>
+                                    <optgroup label="Entretien">
+                                        <option value="entretien-chaudiere">Entretien chaudière</option>
+                                        <option value="entretien-pac">Entretien PAC</option>
+                                        <option value="purge">Purge radiateurs</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group mb-4">
+                            <label class="form-label">Type de logement</label>
+                            <select class="form-select" name="logement">
+                                <option value="appartement">Appartement</option>
+                                <option value="maison">Maison</option>
+                                <option value="commerce">Local commercial</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-4">
+                            <label class="form-label">Surface approximative</label>
+                            <select class="form-select" name="surface">
+                                <option value="small">Moins de 50m²</option>
+                                <option value="medium">50-100m²</option>
+                                <option value="large">100-150m²</option>
+                                <option value="xlarge">Plus de 150m²</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-4">
+                            <label class="form-label">Commentaires</label>
+                            <textarea class="form-control" name="commentaires" rows="3" 
+                                placeholder="Décrivez votre problème en quelques mots..."></textarea>
+                        </div>
+                        <div class="btn-navigation d-flex justify-content-between">
+                            <button type="button" class="btn btn-secondary prev-step">Précédent</button>
+                            <button type="button" class="btn btn-primary" id="calculateBtn">Calculer le devis</button>
+                        </div>
+                    </div>
+
+                    <!-- Étape 4: Prix et Contact -->
+                    <div class="form-step" id="step4">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-check-circle fa-3x text-success"></i>
+                            <h3 class="mt-3">Votre devis estimé</h3>
+                            <div class="estimated-price">
+                                <span id="estimatedAmount">0</span> €
+                            </div>
+                            <p class="text-muted">Cette estimation est donnée à titre indicatif</p>
+                        </div>
+
+                        <div class="contact-form mt-5">
+                            <h4 class="mb-4">Pour recevoir votre devis détaillé :</h4>
+                            <div class="form-group mb-3">
+                                <label>Nom complet</label>
+                                <input type="text" class="form-control" name="name" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label>Email</label>
+                                <input type="email" class="form-control" name="email" required>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label>Téléphone</label>
+                                <input type="tel" class="form-control" name="phone" required>
+                            </div>
+                            <div class="form-group mb-4">
+                                <label>Code postal</label>
+                                <input type="text" class="form-control" name="zipcode" required>
+                            </div>
+                            <div class="d-flex gap-3">
+                                <button type="button" class="btn btn-primary flex-grow-1" id="submitContact">
+                                    <i class="fas fa-paper-plane me-2"></i>
+                                    Recevoir mon devis détaillé
+                                </button>
+                                <a href="tel:+33123456789" class="btn btn-success">
+                                    <i class="fas fa-phone-alt me-2"></i>
+                                    Appeler maintenant
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('devisForm');
+            const steps = document.querySelectorAll('.form-step');
+            const stepIndicators = document.querySelectorAll('.step');
+            const serviceOptions = document.querySelectorAll('.service-option');
+            const urgencyLevels = document.querySelectorAll('.urgency-level');
+            const calculateBtn = document.getElementById('calculateBtn');
+            const submitContact = document.getElementById('submitContact');
+            let currentStep = 0;
+
+            // Service selection
+            serviceOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    serviceOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    
+                    // Afficher les détails correspondants à l'étape 3
+                    const service = this.dataset.service;
+                    document.getElementById('plomberie-details').style.display = 
+                        service === 'plomberie' ? 'block' : 'none';
+                    document.getElementById('chauffage-details').style.display = 
+                        service === 'chauffage' ? 'block' : 'none';
+
+                    // Navigation automatique
+                    setTimeout(() => {
+                        showStep(1);
+                    }, 500);
+                });
+            });
+
+            // Urgency selection
+            urgencyLevels.forEach(level => {
+                level.addEventListener('click', function() {
+                    urgencyLevels.forEach(l => l.classList.remove('selected'));
+                    this.classList.add('selected');
+
+                    // Navigation automatique
+                    setTimeout(() => {
+                        showStep(2);
+                    }, 500);
+                });
+            });
+
+            // Navigation
+            function showStep(stepIndex) {
+                steps.forEach((step, index) => {
+                    step.classList.remove('active');
+                    stepIndicators[index].classList.remove('active', 'completed');
+                    if (index < stepIndex) {
+                        stepIndicators[index].classList.add('completed');
+                    } else if (index === stepIndex) {
+                        stepIndicators[index].classList.add('active');
+                    }
+                });
+                steps[stepIndex].classList.add('active');
+                currentStep = stepIndex;
+            }
+
+            // Calculate estimation
+            calculateBtn.addEventListener('click', function() {
+                const selectedService = document.querySelector('.service-option.selected').dataset.service;
+                const selectedUrgency = document.querySelector('.urgency-level.selected').dataset.urgency;
+                const serviceType = document.querySelector(`select[name="${selectedService}-type"]`).value;
+                const logement = document.querySelector('select[name="logement"]').value;
+                const surface = document.querySelector('select[name="surface"]').value;
+
+                // Prix de base selon le service et le type
+                let basePrice = 0;
+                
+                // Prix pour la plomberie
+                if (selectedService === 'plomberie') {
+                    switch(serviceType) {
+                        case 'fuite': basePrice = 150; break;
+                        case 'evacuation': basePrice = 180; break;
+                        case 'pression': basePrice = 120; break;
+                        case 'robinet': basePrice = 100; break;
+                        case 'sanitaire': basePrice = 200; break;
+                        case 'cumulus': basePrice = 300; break;
+                        case 'debouchage': basePrice = 160; break;
+                        case 'detartrage': basePrice = 140; break;
+                        case 'inspection': basePrice = 180; break;
+                        default: basePrice = 150;
+                    }
+                } else {
+                    switch(serviceType) {
+                        case 'panne': basePrice = 200; break;
+                        case 'fuite-chauffage': basePrice = 180; break;
+                        case 'regulation': basePrice = 150; break;
+                        case 'chaudiere': basePrice = 400; break;
+                        case 'pac': basePrice = 500; break;
+                        case 'radiateur': basePrice = 250; break;
+                        case 'entretien-chaudiere': basePrice = 180; break;
+                        case 'entretien-pac': basePrice = 200; break;
+                        case 'purge': basePrice = 120; break;
+                        default: basePrice = 200;
+                    }
+                }
+
+                // Multiplicateurs
+                const urgencyMultiplier = {
+                    'normal': 1,
+                    'medium': 1.5,
+                    'high': 2
+                };
+
+                const surfaceMultiplier = {
+                    'small': 1,
+                    'medium': 1.3,
+                    'large': 1.6,
+                    'xlarge': 2
+                };
+
+                const logementMultiplier = {
+                    'appartement': 1,
+                    'maison': 1.2,
+                    'commerce': 1.5
+                };
+
+                // Calcul du prix final
+                const finalPrice = Math.round(
+                    basePrice * 
+                    urgencyMultiplier[selectedUrgency] * 
+                    surfaceMultiplier[surface] * 
+                    logementMultiplier[logement]
+                );
+
+                // Animation du montant
+                let currentAmount = 0;
+                const duration = 1000;
+                const increment = finalPrice / (duration / 16);
+                
+                showStep(3); // Passer à l'étape finale
+                
+                const animation = setInterval(() => {
+                    currentAmount += increment;
+                    if (currentAmount >= finalPrice) {
+                        currentAmount = finalPrice;
+                        clearInterval(animation);
+                    }
+                    document.getElementById('estimatedAmount').textContent = 
+                        Math.round(currentAmount);
+                }, 16);
+            });
+
+            // Submit contact form
+            submitContact.addEventListener('click', function() {
+                const name = document.querySelector('input[name="name"]').value;
+                const email = document.querySelector('input[name="email"]').value;
+                const phone = document.querySelector('input[name="phone"]').value;
+                const zipcode = document.querySelector('input[name="zipcode"]').value;
+
+                if (name && email && phone && zipcode) {
+                    alert('Merci ! Nous vous contacterons dans les plus brefs délais avec votre devis détaillé.');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                } else {
+                    alert('Veuillez remplir tous les champs obligatoires.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
